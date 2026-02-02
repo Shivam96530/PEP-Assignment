@@ -18,7 +18,6 @@ public class Assignment4Streams {
             this.skills = skills;
         }
 
-        @Override
         public String toString() {
             return name + " | " + dept + " | " + salary;
         }
@@ -34,94 +33,88 @@ public class Assignment4Streams {
             new Employee(5, "Aman", "IT", 70000, List.of("Java", "Spring"))
         );
 
-        List<Employee> task1 =
-            employees.stream()
-                     .filter(e -> e.salary > 60000)
-                     .toList();
+        System.out.println("Task 1:");
+        employees.stream()
+                .filter(e -> e.salary > 60000)
+                .forEach(System.out::println);
 
-        List<String> task2 =
-            employees.stream()
-                     .map(e -> e.name)
-                     .toList();
+        System.out.println("\nTask 2:");
+        employees.stream()
+                .map(e -> e.name)
+                .forEach(System.out::println);
 
-        Set<String> task3 =
-            employees.stream()
-                     .map(e -> e.name)
-                     .collect(Collectors.toSet());
+        System.out.println("\nTask 3:");
+        employees.stream()
+                .map(e -> e.name)
+                .collect(Collectors.toSet())
+                .forEach(System.out::println);
 
-        List<Employee> task4 =
-            employees.stream()
-                     .sorted((a, b) -> Integer.compare(b.salary, a.salary))
-                     .toList();
+        System.out.println("\nTask 4:");
+        employees.stream()
+                .sorted((a, b) -> b.salary - a.salary)
+                .forEach(System.out::println);
 
-        List<Employee> task5 =
-            employees.stream()
-                     .sorted((a, b) -> Integer.compare(b.salary, a.salary))
-                     .skip(1)
-                     .limit(2)
-                     .toList();
+        System.out.println("\nTask 5:");
+        employees.stream()
+                .sorted((a, b) -> b.salary - a.salary)
+                .skip(1)
+                .limit(2)
+                .forEach(System.out::println);
 
-        Set<String> task6 =
-            employees.stream()
-                     .flatMap(e -> e.skills.stream())
-                     .collect(Collectors.toSet());
+        System.out.println("\nTask 6:");
+        employees.stream()
+                .flatMap(e -> e.skills.stream())
+                .collect(Collectors.toSet())
+                .forEach(System.out::println);
 
-        int task7 =
-            employees.stream()
-                     .map(e -> e.salary)
-                     .reduce(0, Integer::sum);
+        System.out.println("\nTask 7:");
+        int totalSalary =
+                employees.stream()
+                         .map(e -> e.salary)
+                         .reduce(0, Integer::sum);
+        System.out.println(totalSalary);
 
-        double task8 =
-            employees.stream()
-                     .map(e -> e.salary)
-                     .reduce(Integer::sum)
-                     .orElse(0) / (double) employees.stream().count();
+        System.out.println("\nTask 8:");
+        double avgSalary =
+                employees.stream()
+                         .map(e -> e.salary)
+                         .reduce(0, Integer::sum) / (double) employees.size();
+        System.out.println(avgSalary);
 
-        Map<String, List<Employee>> task9 =
-            employees.stream()
-                     .collect(Collectors.groupingBy(e -> e.dept));
+        System.out.println("\nTask 9:");
+        Map<String, List<Employee>> byDept =
+                employees.stream()
+                         .collect(Collectors.groupingBy(e -> e.dept));
+        byDept.forEach((k, v) -> System.out.println(k + " -> " + v));
 
-        Map<String, Employee> task10 =
-            employees.stream()
-                     .collect(Collectors.groupingBy(
-                         e -> e.dept,
-                         Collectors.collectingAndThen(
-                             Collectors.maxBy(Comparator.comparingInt(e -> e.salary)),
-                             Optional::get
-                         )
-                     ));
+        System.out.println("\nTask 10:");
+        Map<String, Employee> highestByDept =
+                employees.stream()
+                         .collect(Collectors.groupingBy(
+                             e -> e.dept,
+                             Collectors.collectingAndThen(
+                                 Collectors.maxBy(Comparator.comparingInt(e -> e.salary)),
+                                 Optional::get
+                             )
+                         ));
+        highestByDept.forEach((k, v) -> System.out.println(k + " -> " + v));
 
-        List<String> task11 =
-            employees.stream()
-                     .filter(e -> e.dept.equals("IT"))
-                     .filter(e -> e.salary > 60000)
-                     .flatMap(e -> e.skills.stream())
-                     .distinct()
-                     .sorted()
-                     .limit(3)
-                     .toList();
+        System.out.println("\nTask 11:");
+        employees.stream()
+                .filter(e -> e.dept.equals("IT") && e.salary > 60000)
+                .flatMap(e -> e.skills.stream())
+                .distinct()
+                .sorted()
+                .limit(3)
+                .forEach(System.out::println);
 
-        Map<String, Map<String, Double>> task12 =
-            employees.stream()
-                     .collect(Collectors.groupingBy(
-                         e -> e.dept,
-                         Collectors.collectingAndThen(
-                             Collectors.toList(),
-                             list -> {
-                                 double total =
-                                     list.stream()
-                                         .map(e -> e.salary)
-                                         .reduce(0, Integer::sum);
-                                 double count = list.size();
-                                 double average = total / count;
-
-                                 Map<String, Double> report = new HashMap<>();
-                                 report.put("total", total);
-                                 report.put("average", average);
-                                 report.put("count", count);
-                                 return report;
-                             }
-                         )
-                     ));
+        System.out.println("\nTask 12:");
+        employees.stream()
+                .collect(Collectors.groupingBy(e -> e.dept))
+                .forEach((dept, list) -> {
+                    int total = list.stream().map(e -> e.salary).reduce(0, Integer::sum);
+                    double avg = total / (double) list.size();
+                    System.out.println(dept + " -> total: " + total + ", avg: " + avg + ", count: " + list.size());
+                });
     }
 }
